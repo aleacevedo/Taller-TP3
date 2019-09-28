@@ -6,17 +6,15 @@
 #include <map>
 #include <string>
 #include "key_def.h"
+#include "conf_file.h"
 
-#define KEY_DELIMITER '='
-#define LINE_DELIMITER '\n'
 
 class HoneyPot {
-  std::ifstream conf_file;
+  ConfFile conf_file;
   std::map<std::string, std::string> configs;
 
  public:
   HoneyPot(std::string file_path);
-  void load_confs();
   std::string get_user();
   std::string get_password();
   std::string get_msg_new_client();
@@ -37,7 +35,6 @@ class HoneyPot {
   ~HoneyPot();
 
  private:
-  int read_one_pair(std::string &key, std::string &value);
   std::string get_conf(const std::string &key);
 };
 

@@ -3,13 +3,10 @@
 #include "file_error.h"
 
 HoneyPot::HoneyPot(std::string file_path) : conf_file(file_path),
-                                            configs() {}
-
-void HoneyPot::load_confs() {
+                                            configs() {
   std::string key;
   std::string value;
-  if (!this->conf_file.good()) throw FileError("File is not good ");
-  while (read_one_pair(key, value) != 1) {
+  while (this->conf_file.get_pair(key, value) != 1) {
     configs[key] = value;
   }
 }
@@ -66,16 +63,7 @@ std::string HoneyPot::get_msg_quit() {
   return this->get_conf(MSG_QUIT_KEY);
 }
 
-HoneyPot::~HoneyPot() {
-  this->conf_file.close();
-}
-
-int HoneyPot::read_one_pair(std::string &key, std::string &value) {
-  std::getline(this->conf_file, key, KEY_DELIMITER);
-  std::getline(this->conf_file, value, LINE_DELIMITER);
-  if (this->conf_file.eof()) return 1;
-  return 0;
-}
+HoneyPot::~HoneyPot() {}
 
 std::string HoneyPot::get_conf(const std::string &key) {
   try {
