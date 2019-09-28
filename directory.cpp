@@ -1,6 +1,5 @@
 #include "directory.h"
-#include "dir_exist_error.h"
-#include "dir_not_exist_error.h"
+#include "custom_errors.h"
 
 Directory::Directory() : directories() {}
 

@@ -1,11 +1,8 @@
 #include <iostream>
 
 #include "honey_pot.h"
-#include "file_error.h"
 #include "directory.h"
-#include "key_not_found_error.h"
-#include "dir_exist_error.h"
-#include "dir_not_exist_error.h"
+#include "custom_errors.h"
 
 int main(int argc, char* argv[]) {
   try {

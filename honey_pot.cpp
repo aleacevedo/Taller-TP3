@@ -1,6 +1,5 @@
 #include "honey_pot.h"
-#include "key_not_found_error.h"
-#include "file_error.h"
+#include "custom_errors.h"
 
 HoneyPot::HoneyPot(std::string file_path) : conf_file(file_path),
                                             configs() {
