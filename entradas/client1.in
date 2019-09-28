@@ -1,0 +1,7 @@
+USER admin
+PASS l33tP4s5
+LIST
+MKD baz
+MKD lalala
+LIST
+QUIT
