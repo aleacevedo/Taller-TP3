@@ -2,15 +2,14 @@
 #define KEY_NOT_FOUND_ERROR_H_
 
 #include <exception>
-
-#define BUF_LEN 256
+#include <string>
 
 class KeyNotFoundError : public std::exception {
  private:
-  char msg_error[BUF_LEN];
+  std::string msg_error;
 
  public:
-  explicit KeyNotFoundError(const char* fmt, ...) noexcept;
+  explicit KeyNotFoundError(std::string msg) noexcept;
   virtual const char *what() const noexcept;
   virtual ~KeyNotFoundError() noexcept {};
 };
