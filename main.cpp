@@ -7,7 +7,6 @@
 int main(int argc, char* argv[]) {
   try {
     HoneyPot pot("entradas/config.cfg");
-    pot.load_confs();
     std::cout << pot.get_current_dir();
     std::cout << pot.get_msg_unknown_cmd();
   } catch (FileError &e) {
