@@ -58,7 +58,7 @@ int Socket::to_accept() {
 
 int Socket::to_receive(std::string &buffer, int size) {
   int received = 0;
-  char *buff = new char[size]();
+  char *buff = new char[size+1]();
   if (this->is_server) throw SocketError("It is server");
   while (received < size) {
     int s = recv(this->skt, buff + received, size - received, 0);
@@ -76,7 +76,7 @@ int Socket::to_receive(std::string &buffer, int size) {
 
 int Socket::to_receive(int skt, std::string &buffer, int size) {
   int received = 0;
-  char *buff = new char[size]();
+  char *buff = new char[size+1]();
   if (!this->is_server) throw SocketError("It is not server");
   while (received < size) {
     int s = recv(skt, buff + received, size - received, 0);
