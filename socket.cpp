@@ -122,6 +122,11 @@ bool Socket::get_is_server() {
   return this->is_server;
 }
 
+void Socket::close_skt(int skt) {
+  shutdown(skt, SHUT_RDWR);
+  close(skt);
+}
+
 Socket::~Socket() {
   freeaddrinfo(this->ptr);
   shutdown(this->skt, SHUT_RDWR);

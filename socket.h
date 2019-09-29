@@ -25,6 +25,7 @@ class Socket {
   int to_receive(int skt, std::string &buffer, int size);
   int to_send(int skt, std::string msg, int size);
   bool get_is_server();
+  void close_skt(int skt);
   ~Socket();
  private:
   void getAddrInfo(std::string service);
