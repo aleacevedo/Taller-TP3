@@ -6,6 +6,10 @@ FTP::FTP(std::string conf_file_path) : myPot(conf_file_path),
                                        myDir(),
                                        logged() {}
 
+std::string FTP::newClient() {
+  return this->myPot.get_msg_new_client();
+}
+
 std::string FTP::user(int client, std::string user) {
   if (this->logged.find(client) != this->logged.end())
     return this->myPot.get_msg_pass_required() + "\n";
@@ -66,6 +70,10 @@ std::string FTP::rmd(int client, std::string dir) {
   } catch(DirNotExistError &e) {
     return this->myPot.get_msg_rmd_fail() + "\n";
   }
+}
+
+std::string FTP::unknow() {
+  return this->myPot.get_msg_unknown_cmd();
 }
 
 FTP::~FTP() {}

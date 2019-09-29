@@ -14,6 +14,7 @@ class FTP {
   std::map<int, bool> logged;
  public:
   explicit FTP(std::string conf_file_pahth);
+  std::string newClient();
   std::string user(int client, std::string user);
   std::string pass(int client, std::string pass);
   std::string syst(int client);
@@ -21,6 +22,7 @@ class FTP {
   std::string pwd(int client);
   std::string mkd(int client, std::string dir);
   std::string rmd(int client, std::string dir);
+  std::string unknow();
   ~FTP();
  private:
   bool is_logged(int client);
