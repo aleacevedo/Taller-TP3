@@ -9,7 +9,8 @@ int main(int argc, char* argv[]) {
   std::string receive;
   try {
     std::cout << "Empiezo \n";
-    Socket skt(std::string("8182"));
+    std::string service("8182");
+    Socket skt(service);
     std::cout << "Inicializado \n";
     skt.to_listen();
     std::cout << "Escuchando \n";

@@ -16,7 +16,7 @@ class Socket {
   bool is_server;
 
  public:
-  Socket(std::string service);
+  Socket(std::string &service);
   Socket(std::string host, std::string service);
   void to_listen();
   int to_accept();
