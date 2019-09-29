@@ -1,5 +1,5 @@
-#ifndef FTP_H_
-#define FTP_H_
+#ifndef HONEY_POT_H_
+#define HONEY_POT_H_
 
 #include <iostream>
 #include <fstream>
@@ -38,4 +38,4 @@ class HoneyPot {
   std::string get_conf(const std::string &key);
 };
 
-#endif  //  FTP_H_
+#endif  //  HONEY_POT_H_
