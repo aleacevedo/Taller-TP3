@@ -14,9 +14,11 @@ int main(int argc, char* argv[]) {
     std::cout << "Inicializado \n";
     skt.to_listen();
     std::cout << "Escuchando \n";
-    skt.to_accept();
-    skt.to_receive(receive, 10);
-    skt.to_send(receive, 10);
+    int client = skt.to_accept();
+    std::cout << "Cliente aceptado \n";
+    skt.to_receive(client, receive, 10);
+    std::cout << "Recibi " << receive << "\n";
+    skt.to_send(client, receive, 10);
   } catch (FileError &e) {
     std::cout << e.what();
   } catch (KeyNotFoundError &e) {
@@ -27,5 +29,7 @@ int main(int argc, char* argv[]) {
     std::cout << e.what();
   } catch(std::exception &e) {
     std::cout << e.what();
+  } catch(...) {
+    std::cout << "Unknown Error";
   }
 }

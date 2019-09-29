@@ -2,17 +2,15 @@
 #include <iostream>
 #include "custom_errors.h"
 
-Socket::Socket(std::string &service) : skt(),
+Socket::Socket(std::string service) : skt(),
                                        hints(),
                                        ptr(),
                                        is_server(false) {
-  std::cout << "DEBUG 1";
   this->is_server = true;
   this->hints.ai_family = AF_INET;
   this->hints.ai_socktype = SOCK_STREAM;
   this->hints.ai_flags = AI_PASSIVE;
-  std::cout << "DEBUG 2";
-  this->getAddrInfo(NULL, service);
+  this->getAddrInfo(service);
   this->skt = socket(this->ptr->ai_family,
                 this->ptr->ai_socktype,
                 this->ptr->ai_protocol);
@@ -71,7 +69,7 @@ int Socket::to_receive(std::string &buffer, int size) {
     }
     received += s;
   }
-  buffer = std::string(buffer);
+  buffer = std::string(buff);
   delete[] buff;
   return received;
 }
@@ -89,7 +87,7 @@ int Socket::to_receive(int skt, std::string &buffer, int size) {
     }
     received += s;
   }
-  buffer = std::string(buffer);
+  buffer = std::string(buff);
   delete[] buff;
   return received;
 }
@@ -128,6 +126,14 @@ Socket::~Socket() {
   freeaddrinfo(this->ptr);
   shutdown(this->skt, SHUT_RDWR);
   close(this->skt);
+}
+
+void Socket::getAddrInfo(std::string service) {
+  int resAddr;
+  if ((resAddr = getaddrinfo(NULL, service.c_str(),
+                    &(this->hints),
+                    &(this->ptr))) != 0)
+    throw GetAddrInfoError(gai_strerror(resAddr));
 }
 
 void Socket::getAddrInfo(std::string host, std::string service) {
