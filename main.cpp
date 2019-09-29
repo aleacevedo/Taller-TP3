@@ -4,21 +4,23 @@
 #include "directory.h"
 #include "custom_errors.h"
 #include "socket.h"
+#include "ftp.h"
 
 int main(int argc, char* argv[]) {
-  std::string receive;
+  FTP ftp_pot("entradas/config.cfg");
+  std::cout << ftp_pot.syst(1) << "\n";
+  std::cout << ftp_pot.user(1, "admin") << "\n";
+  std::cout << ftp_pot.pass(1, "l33tP4s5") << "\n";
+  std::cout << ftp_pot.syst(1) << "\n";
+  std::cout << ftp_pot.list(1) << "\n";
+  std::cout << ftp_pot.mkd(1, "newDir1") << "\n";
+  std::cout << ftp_pot.mkd(1, "newDir1") << "\n";
+  std::cout << ftp_pot.mkd(1, "newDir2") << "\n";
+  std::cout << ftp_pot.list(1) << "\n";
+  std::cout << ftp_pot.rmd(1, "newDir1") << "\n";
+  std::cout << ftp_pot.rmd(1, "newDir1") << "\n";
+  std::cout << ftp_pot.list(1) << "\n";
   try {
-    std::cout << "Empiezo \n";
-    std::string service("8182");
-    Socket skt(service);
-    std::cout << "Inicializado \n";
-    skt.to_listen();
-    std::cout << "Escuchando \n";
-    int client = skt.to_accept();
-    std::cout << "Cliente aceptado \n";
-    skt.to_receive(client, receive, 10);
-    std::cout << "Recibi " << receive << "\n";
-    skt.to_send(client, receive, 10);
   } catch (FileError &e) {
     std::cout << e.what();
   } catch (KeyNotFoundError &e) {
