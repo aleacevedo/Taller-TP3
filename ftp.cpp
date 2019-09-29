@@ -64,7 +64,7 @@ std::string FTP::rmd(int client, std::string dir) {
     this->myDir.remove(FAKE_INFO + dir);
     return this->myPot.get_msg_rmd_success() + "\n";
   } catch(DirNotExistError &e) {
-    return this->myPot.get_msg_rmd_fail(); + "\n"
+    return this->myPot.get_msg_rmd_fail() + "\n";
   }
 }
 
