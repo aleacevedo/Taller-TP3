@@ -26,5 +26,7 @@ int main(int argc, char* argv[]) {
     std::cout << e.what();
   } catch(DirExistError &e) {
     std::cout << e.what();
+  } catch(std::exception &e) {
+    std::cout << e.what();
   }
 }

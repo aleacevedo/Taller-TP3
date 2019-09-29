@@ -1,10 +1,12 @@
 #include "socket.h"
+#include <iostream>
 #include "custom_errors.h"
 
 Socket::Socket(std::string service) : skt(),
                                       hints(),
                                       ptr(),
                                       is_server(false) {
+  std::cout << "DEBUG 1";
   this->is_server = true;
   this->hints.ai_family = AF_INET;
   this->hints.ai_socktype = SOCK_STREAM;
