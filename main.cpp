@@ -9,12 +9,10 @@ int main(int argc, char* argv[]) {
   std::string receive;
   try {
     std::cout << "Empiezo \n";
-    Socket skt("8182");
-        std::cout << "Inicializado \n";
-
+    Socket skt(std::string("8182"));
+    std::cout << "Inicializado \n";
     skt.to_listen();
-        std::cout << "Escuchando \n";
-
+    std::cout << "Escuchando \n";
     skt.to_accept();
     skt.to_receive(receive, 10);
     skt.to_send(receive, 10);
