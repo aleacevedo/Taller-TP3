@@ -2,7 +2,7 @@
 #include <errno.h>
 #include <cstdio>
 #include <cstdarg>
-#include <strings.h>
+#include <string.h>
 
 DirExistError::DirExistError(std::string msg) noexcept {
   this->msg_error = msg + "\n Directory alredy exist error \n";
