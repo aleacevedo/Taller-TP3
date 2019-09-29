@@ -20,18 +20,13 @@ const char* DirNotExistError::what() const noexcept {
   return this->msg_error.c_str();
 }
 
-FileError::FileError(const char *fmt, ...) noexcept {
+FileError::FileError(std::string msg) noexcept {
   int _errno = errno;
-  va_list args;
-  va_start(args, fmt);
-  int s = vsnprintf(msg_error, BUF_LEN, fmt, args);
-  va_end(args);
-  strncpy(msg_error+s,  strerror(_errno), BUF_LEN-s);
-  msg_error[BUF_LEN-1] = 0;
+  this->msg_error = msg + " " + strerror(_errno);
 }
 
 const char* FileError::what() const noexcept {
-  return this->msg_error;
+  return this->msg_error.c_str();
 }
 
 KeyNotFoundError::KeyNotFoundError(const std::string msg) noexcept {
@@ -39,5 +34,22 @@ KeyNotFoundError::KeyNotFoundError(const std::string msg) noexcept {
 }
 
 const char* KeyNotFoundError::what() const noexcept {
+  return this->msg_error.c_str();
+}
+
+GetAddrInfoError::GetAddrInfoError(std::string msg) noexcept {
+  this->msg_error = msg + "\n Get addr info error error \n";
+}
+
+const char* GetAddrInfoError::what() const noexcept {
+  return this->msg_error.c_str();
+}
+
+SocketError::SocketError(std::string msg) noexcept {
+  int _errno = errno;
+  this->msg_error = msg + " " + strerror(_errno);
+}
+
+const char* SocketError::what() const noexcept {
   return this->msg_error.c_str();
 }

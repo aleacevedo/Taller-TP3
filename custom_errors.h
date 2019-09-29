@@ -8,10 +8,10 @@
 
 class FileError : public std::exception {
  private:
-  char msg_error[BUF_LEN];
+  std::string msg_error;
 
  public:
-  explicit FileError(const char* fmt, ...) noexcept;
+  explicit FileError(std::string msg) noexcept;
   virtual const char *what() const noexcept;
   virtual ~FileError() noexcept {};
 };
@@ -44,6 +44,26 @@ class DirExistError : public std::exception {
   explicit DirExistError(std::string msg) noexcept;
   virtual const char *what() const noexcept;
   virtual ~DirExistError() noexcept {};
+};
+
+class GetAddrInfoError : public std::exception {
+ private:
+  std::string msg_error;
+
+ public:
+  explicit GetAddrInfoError(std::string msg) noexcept;
+  virtual const char *what() const noexcept;
+  virtual ~GetAddrInfoError() noexcept {};
+};
+
+class SocketError : public std::exception {
+ private:
+  std::string msg_error;
+
+ public:
+  explicit SocketError(std::string msg) noexcept;
+  virtual const char *what() const noexcept;
+  virtual ~SocketError() noexcept {};
 };
 
 
