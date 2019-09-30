@@ -1,8 +1,8 @@
 #include "command.h"
 #include <iterator>
 
-FactoryCommand::FactoryCommand(std::string conf_file_paht) : commands(),
-                                                  ftp(conf_file_paht) {
+FactoryCommand::FactoryCommand(FTP &ftp) : commands(),
+                                           ftp(ftp) {
   this->commands["USER"] = new UserCommand(this->ftp);
   this->commands["PASS"] = new PassCommand(this->ftp);
   this->commands["SYST"] = new SystCommand(this->ftp);

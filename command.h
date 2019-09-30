@@ -13,9 +13,9 @@ class Command {
 
 class FactoryCommand {
   std::map<std::string, Command*> commands;
-  FTP ftp;
+  FTP &ftp;
  public:
-  FactoryCommand(std::string conf_file_path);
+  FactoryCommand(FTP &ftp);
   std::map<std::string, Command*> getCommands();
   ~FactoryCommand();
 };
