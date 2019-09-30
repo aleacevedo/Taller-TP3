@@ -5,22 +5,19 @@
 #include "custom_errors.h"
 #include "socket.h"
 #include "command.h"
+#include "th_client.h"
 
 int main(int argc, char* argv[]) {
-  FactoryCommand fact("entradas/config.cfg");
-  std::cout << fact.getCommands()["SYST"]->execute(1, "") << "\n";
-  std::cout << fact.getCommands()["USER"]->execute(1, "admin") << "\n";
-  std::cout << fact.getCommands()["PASS"]->execute(1, "l33tP4s5") << "\n";
-  std::cout << fact.getCommands()["SYST"]->execute(1, "") << "\n";
-  std::cout << fact.getCommands()["LIST"]->execute(1, "") << "\n";
-  std::cout << fact.getCommands()["MKD"]->execute(1, "newDir1") << "\n";
-  std::cout << fact.getCommands()["MKD"]->execute(1, "newDir1") << "\n";
-  std::cout << fact.getCommands()["MKD"]->execute(1, "newDir2") << "\n";
-  std::cout << fact.getCommands()["LIST"]->execute(1, "") << "\n";
-  std::cout << fact.getCommands()["RMD"]->execute(1, "newDir1") << "\n";
-  std::cout << fact.getCommands()["RMD"]->execute(1, "newDir1") << "\n";
-  std::cout << fact.getCommands()["LIST"]->execute(1, "") << "\n";
   try {
+    FTP ftp("entradas/config.cfg");
+    FactoryCommand fact(ftp);
+    Socket skt("8182");
+    skt.to_listen();
+    int client = skt.to_accept();
+    THClient th(client, ftp, fact, skt);
+    th.run();
+    std::cout << "esperando el join";
+    th.join();
   } catch (FileError &e) {
     std::cout << e.what();
   } catch (KeyNotFoundError &e) {
