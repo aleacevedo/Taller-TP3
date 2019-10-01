@@ -127,6 +127,11 @@ void Socket::close_skt(int skt) {
   close(skt);
 }
 
+void Socket::close_me() {
+  shutdown(this->skt, SHUT_RDWR);
+  close(this->skt);
+}
+
 Socket::~Socket() {
   freeaddrinfo(this->ptr);
   shutdown(this->skt, SHUT_RDWR);
