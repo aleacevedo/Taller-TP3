@@ -18,6 +18,21 @@ int Protocol::receive(int from, std::string &received) {
   return 1;
 }
 
+int Protocol::send(std::string msg) {
+  return this->skt.to_send(msg, msg.size());
+}
+
+int Protocol::receive(std::string &received) {
+  std::string caracter;
+  this->skt.to_receive(caracter, 1);
+  while (caracter.compare("\n") != 0 && caracter.compare("\r") != 0) {
+    received = received + caracter;
+    if (this->skt.to_receive(caracter, 1) == 0)
+      return 0;
+  }
+  return 1;
+}
+
 void Protocol::quit(int client) {
   this->skt.close_skt(client);
 }

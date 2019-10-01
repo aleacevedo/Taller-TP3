@@ -20,6 +20,7 @@ class Socket {
   Socket(std::string host, std::string service);
   void to_listen();
   int to_accept();
+  void to_connect();
   int to_receive(std::string &buffer, int size);
   int to_send(std::string msg, int size);
   int to_receive(int skt, std::string &buffer, int size);

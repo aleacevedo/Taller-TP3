@@ -1,11 +1,14 @@
 #include "common_socket.h"
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
 #include "common_custom_errors.h"
 
 Socket::Socket(std::string service) : skt(),
                                        hints(),
                                        ptr(),
                                        is_server(false) {
+  memset(&(this->hints), 0, sizeof hints);
   this->is_server = true;
   this->hints.ai_family = AF_INET;
   this->hints.ai_socktype = SOCK_STREAM;
@@ -21,6 +24,7 @@ Socket::Socket(std::string service) : skt(),
 }
 
 Socket::Socket(std::string host, std::string service) {
+  memset(&(this->hints), 0, sizeof hints);
   struct addrinfo *directions = this->ptr;
   this->is_server = false;
   this->hints.ai_family = AF_INET;
@@ -54,6 +58,12 @@ int Socket::to_accept() {
   if (connection == -1)
     throw SocketError("Error accepting: ");
   return connection;
+}
+
+void Socket::to_connect() {
+  if (this->is_server) throw SocketError("It is server");
+  if (connect(this->skt, this->ptr->ai_addr, this->ptr->ai_addrlen) == -1)
+    throw SocketError("Error connecting: ");
 }
 
 int Socket::to_receive(std::string &buffer, int size) {
@@ -151,8 +161,9 @@ void Socket::getAddrInfo(std::string service) {
 
 void Socket::getAddrInfo(std::string host, std::string service) {
   int resAddr;
-  if ((resAddr = getaddrinfo(host.c_str(), service.c_str(),
-                    &(this->hints),
-                    &(this->ptr))) != 0)
+  if ((resAddr = getaddrinfo(host.c_str(),
+                             service.c_str(),
+                             &(this->hints),
+                             &(this->ptr))) != 0)
     throw GetAddrInfoError(gai_strerror(resAddr));
 }
