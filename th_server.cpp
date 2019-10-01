@@ -13,7 +13,7 @@ THServer::THServer(std::string config_file_path,
 void THServer::run() {
   try {
     while (this->keep_alive) {
-      this->stop_dead_clients();
+      // this->stop_dead_clients();
       int client = this->skt.to_accept();
       this->clients.push_back(new THClient(client, this->fact, this->proto));
       this->clients.back()->start();
@@ -46,8 +46,8 @@ void THServer::stop_all_clients() {
   for (THClient *client : clients) {
     if (client->is_keep_talking()) {
       client->stop();
-      client->join();
     }
+    client->join();
     delete client;
   }
 }
