@@ -26,6 +26,7 @@ void THClient::run() {
   } catch (...) {
     std::cout << "UNKNOW ERROR\n";
   }
+  this->keep_talking = false;
 }
 
 bool THClient::is_keep_talking() {
