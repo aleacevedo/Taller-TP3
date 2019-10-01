@@ -3,10 +3,10 @@
 
 Thread::Thread() {}
 void Thread::start() {
-  thread = std::thread(&Thread::run, this);
+  thread = new std::thread(&Thread::run, this);
 }
 void Thread::join() {
-  thread.join();
+  thread->join();
 }
 Thread::Thread(Thread&& other) {
   this->thread = std::move(other.thread);
@@ -14,4 +14,8 @@ Thread::Thread(Thread&& other) {
 Thread& Thread::operator=(Thread&& other) {
   this->thread = std::move(other.thread);
   return *this;
+}
+
+Thread::~Thread() {
+  delete this->thread;
 }
