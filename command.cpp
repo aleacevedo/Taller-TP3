@@ -3,6 +3,7 @@
 
 FactoryCommand::FactoryCommand(FTP &ftp) : commands(),
                                            ftp(ftp) {
+  this->commands["NEWCLIENT"] = new NewClientCommand(this->ftp);
   this->commands["USER"] = new UserCommand(this->ftp);
   this->commands["PASS"] = new PassCommand(this->ftp);
   this->commands["SYST"] = new SystCommand(this->ftp);
@@ -11,9 +12,11 @@ FactoryCommand::FactoryCommand(FTP &ftp) : commands(),
   this->commands["PWD"] = new PWDCommand(this->ftp);
   this->commands["MKD"] = new MKDCommand(this->ftp);
   this->commands["RMD"] = new RMDCommand(this->ftp);
+  this->commands["UNKNOW"] = new UNKCommand(this->ftp);
+  this->commands["QUIT"] = new QuitCommand(this->ftp);
 }
 
-std::map<std::string, Command*> FactoryCommand::getCommands() {
+std::map<std::string, Command*> &FactoryCommand::getCommands() {
   return  this->commands;
 }
 
@@ -23,53 +26,72 @@ FactoryCommand::~FactoryCommand() {
     delete it->second;
 }
 
+NewClientCommand::NewClientCommand(FTP &ftp) : ftp(ftp) {}
+int NewClientCommand::execute(int client, std::string user) {
+  return this->ftp.newClient(client);
+}
+NewClientCommand::~NewClientCommand() {}
+
 UserCommand::UserCommand(FTP &ftp) : ftp(ftp) {}
-std::string UserCommand::execute(int client, std::string user) {
+int UserCommand::execute(int client, std::string user) {
   return this->ftp.user(client, user);
 }
 UserCommand::~UserCommand() {}
 
 PassCommand::PassCommand(FTP &ftp) : ftp(ftp) {}
-std::string PassCommand::execute(int client, std::string pass) {
+int PassCommand::execute(int client, std::string pass) {
   return this->ftp.pass(client, pass);
 }
 PassCommand::~PassCommand() {}
 
 SystCommand::SystCommand(FTP &ftp) : ftp(ftp) {}
-std::string SystCommand::execute(int client, std::string null) {
+int SystCommand::execute(int client, std::string null) {
   return this->ftp.syst(client);
 }
 SystCommand::~SystCommand() {}
 
 ListCommand::ListCommand(FTP &ftp) : ftp(ftp) {}
-std::string ListCommand::execute(int client, std::string null) {
+int ListCommand::execute(int client, std::string null) {
   return this->ftp.list(client);
 }
 ListCommand::~ListCommand() {}
 /*
 HelpCommand::UserCommand(FTP &ftp) : ftp(ftp) {}
-std::string HelpCommand::execute(int client) {
+int HelpCommand::execute(int client) {
   return this->ftp.user(client, "");
 }
-std::string HelpCommand::execute(int client, std::string user) {
+int HelpCommand::execute(int client, std::string user) {
   return this->ftp.user(client, user);
 }
 HelpCommand::~HelpCommand() {}
 */
 PWDCommand::PWDCommand(FTP &ftp) : ftp(ftp) {}
-std::string PWDCommand::execute(int client, std::string null) {
+int PWDCommand::execute(int client, std::string null) {
   return this->ftp.pwd(client);
 }
 PWDCommand::~PWDCommand() {}
 
 MKDCommand::MKDCommand(FTP &ftp) : ftp(ftp) {}
-std::string MKDCommand::execute(int client, std::string dir) {
+int MKDCommand::execute(int client, std::string dir) {
   return this->ftp.mkd(client, dir);
 }
 MKDCommand::~MKDCommand() {}
 
 RMDCommand::RMDCommand(FTP &ftp) : ftp(ftp) {}
-std::string RMDCommand::execute(int client, std::string user) {
+int RMDCommand::execute(int client, std::string user) {
   return this->ftp.rmd(client, user);
 }
 RMDCommand::~RMDCommand() {}
+
+UNKCommand::UNKCommand(FTP &ftp) : ftp(ftp) {}
+int UNKCommand::execute(int client, std::string user) {
+  return this->ftp.unknow(client);
+}
+UNKCommand::~UNKCommand() {}
+
+
+QuitCommand::QuitCommand(FTP &ftp) : ftp(ftp) {}
+int QuitCommand::execute(int client, std::string user) {
+  return this->ftp.quit(client);
+}
+QuitCommand::~QuitCommand() {}
