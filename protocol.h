@@ -11,6 +11,7 @@ class Protocol {
   explicit Protocol(Socket &skt);
   int send(int to, std::string msg);
   int receive(int from, std::string &received);
+  void quit(int client);
   ~Protocol();
 };
 
