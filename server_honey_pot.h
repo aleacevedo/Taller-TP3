@@ -5,8 +5,8 @@
 #include <fstream>
 #include <map>
 #include <string>
-#include "key_def.h"
-#include "conf_file.h"
+#include "server_key_def.h"
+#include "server_conf_file.h"
 
 
 class HoneyPot {

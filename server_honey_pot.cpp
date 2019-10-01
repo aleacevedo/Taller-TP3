@@ -1,5 +1,5 @@
-#include "honey_pot.h"
-#include "custom_errors.h"
+#include "server_honey_pot.h"
+#include "common_custom_errors.h"
 
 HoneyPot::HoneyPot(std::string file_path) : conf_file(file_path),
                                             configs() {

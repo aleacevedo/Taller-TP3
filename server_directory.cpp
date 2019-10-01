@@ -1,5 +1,5 @@
-#include "directory.h"
-#include "custom_errors.h"
+#include "server_directory.h"
+#include "common_custom_errors.h"
 
 Directory::Directory() : directories() {}
 

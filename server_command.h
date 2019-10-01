@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include "ftp.h"
+#include "server_ftp.h"
 
 class Command {
  public:

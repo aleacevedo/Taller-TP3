@@ -1,4 +1,4 @@
-#include "command.h"
+#include "server_command.h"
 #include <iterator>
 
 FactoryCommand::FactoryCommand(FTP &ftp) : commands(),

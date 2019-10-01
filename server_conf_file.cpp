@@ -1,5 +1,5 @@
-#include "conf_file.h"
-#include "custom_errors.h"
+#include "server_conf_file.h"
+#include "common_custom_errors.h"
 
 ConfFile::ConfFile(std::string file_path) : my_file(file_path) {
   if (!this->my_file.good()) {

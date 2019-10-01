@@ -1,4 +1,4 @@
-#include "th_server.h"
+#include "server_th_server.h"
 
 THServer::THServer(std::string config_file_path,
                    std::string service) : keep_alive(true),

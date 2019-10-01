@@ -1,7 +1,7 @@
-#include "ftp.h"
+#include "server_ftp.h"
 #include <iostream>
 #include <exception>
-#include "custom_errors.h"
+#include "common_custom_errors.h"
 
 FTP::FTP(std::string conf_file_path,
          Protocol &protocol) : myPot(conf_file_path),

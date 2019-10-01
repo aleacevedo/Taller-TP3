@@ -1,6 +1,6 @@
-#include "socket.h"
+#include "common_socket.h"
 #include <iostream>
-#include "custom_errors.h"
+#include "common_custom_errors.h"
 
 Socket::Socket(std::string service) : skt(),
                                        hints(),

@@ -2,7 +2,7 @@
 #define PROTOCOL_H_
 
 #include <string>
-#include "socket.h"
+#include "common_socket.h"
 
 class Protocol {
   Socket &skt;

@@ -3,9 +3,9 @@
 
 #include <map>
 #include <string>
-#include "honey_pot.h"
-#include "directory.h"
-#include "protocol.h"
+#include "server_honey_pot.h"
+#include "server_directory.h"
+#include "common_protocol.h"
 
 #define FAKE_INFO "drwxrwxrwx 0 1000 1000 4096 Sep 24 12:34 "
 

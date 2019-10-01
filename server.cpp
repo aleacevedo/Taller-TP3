@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
-#include "th_server.h"
-#include "custom_errors.h"
+#include "server_th_server.h"
+#include "common_custom_errors.h"
 
 std::string  obtain_input() {
   std::string input;

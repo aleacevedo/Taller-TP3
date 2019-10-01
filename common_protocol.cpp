@@ -1,4 +1,4 @@
-#include "protocol.h"
+#include "common_protocol.h"
 #include <iostream>
 
 Protocol::Protocol(Socket &skt) : skt(skt) {}

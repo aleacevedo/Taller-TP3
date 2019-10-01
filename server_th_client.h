@@ -2,11 +2,11 @@
 #define TH_CLIENT_H_
 
 #include <string>
-#include "thread.h"
-#include "ftp.h"
-#include "command.h"
-#include "socket.h"
-#include "protocol.h"
+#include "server_thread.h"
+#include "server_ftp.h"
+#include "server_command.h"
+#include "common_socket.h"
+#include "common_protocol.h"
 
 
 class THClient : public Thread {
