@@ -36,3 +36,5 @@ tp
 .idea/
 cmake-build-debug/
 CMakeLists.txt
+server
+client
