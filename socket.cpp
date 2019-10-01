@@ -80,9 +80,10 @@ int Socket::to_receive(int skt, std::string &buffer, int size) {
   if (!this->is_server) throw SocketError("It is not server");
   while (received < size) {
     int s = recv(skt, buff + received, size - received, 0);
-    if (s == 0)
+    if (s == 0) {
       delete[] buff;
       return 0;
+    }
     if (s == -1) {
       delete[] buff;
       throw SocketError("Error receiving: ");
