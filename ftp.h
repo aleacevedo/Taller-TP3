@@ -5,6 +5,7 @@
 #include <string>
 #include "honey_pot.h"
 #include "directory.h"
+#include "protocol.h"
 
 #define FAKE_INFO "drwxrwxrwx 0 1000 1000 4096 Sep 24 12:34 "
 
@@ -12,17 +13,19 @@ class FTP {
   HoneyPot myPot;
   Directory myDir;
   std::map<int, bool> logged;
+  Protocol &protocol;
  public:
-  explicit FTP(std::string conf_file_pahth);
-  std::string newClient();
-  std::string user(int client, std::string user);
-  std::string pass(int client, std::string pass);
-  std::string syst(int client);
-  std::string list(int cient);
-  std::string pwd(int client);
-  std::string mkd(int client, std::string dir);
-  std::string rmd(int client, std::string dir);
-  std::string unknow();
+  explicit FTP(std::string conf_file_pahth, Protocol &protocol);
+  int newClient(int client);
+  int user(int client, std::string user);
+  int pass(int client, std::string pass);
+  int syst(int client);
+  int list(int cient);
+  int pwd(int client);
+  int mkd(int client, std::string dir);
+  int rmd(int client, std::string dir);
+  int unknow(int client);
+  int quit(int client);
   ~FTP();
  private:
   bool is_logged(int client);
