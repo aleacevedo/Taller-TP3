@@ -1,22 +1,21 @@
 #include <iostream>
-
-#include "honey_pot.h"
-#include "directory.h"
+#include <string>
+#include "th_server.h"
 #include "custom_errors.h"
-#include "socket.h"
-#include "command.h"
-#include "th_client.h"
+
+std::string  obtain_input() {
+  std::string input;
+  std::cout << "Ingrese el caracter q para salir\n";
+  std::cin >> input;
+  return input;
+}
 
 int main(int argc, char* argv[]) {
   try {
-    FTP ftp("entradas/config.cfg");
-    FactoryCommand fact(ftp);
-    Socket skt("8182");
-    skt.to_listen();
-    int client = skt.to_accept();
-    THClient th(client, ftp, fact, skt);
-    th.run();
-    std::cout << "esperando el join";
+    THServer th("entradas/config.cfg", "81");
+    th.start();
+    while (obtain_input().compare("q") != 0) {}
+    th.stop();
     th.join();
   } catch (FileError &e) {
     std::cout << e.what();
@@ -27,8 +26,9 @@ int main(int argc, char* argv[]) {
   } catch(DirExistError &e) {
     std::cout << e.what();
   } catch(std::exception &e) {
+    std::cout << "ERROR EN EL MAIN \n";
     std::cout << e.what();
   } catch(...) {
-    std::cout << "Unknown Error";
+    std::cout << "Unknown Error\n";
   }
 }
