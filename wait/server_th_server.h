@@ -5,7 +5,7 @@
 #include <vector>
 #include "server_th_client.h"
 #include "server_thread.h"
-#include "server_ftp.h"
+#include "server_ftp_factory.h"
 #include "server_command.h"
 #include "common_socket.h"
 #include "common_protocol.h"
@@ -16,7 +16,6 @@ class THServer : public Thread {
   Socket skt;
   Protocol proto;
   FTP ftp;
-  FactoryCommand fact;
   std::vector<THClient*> clients;
 
  public:
