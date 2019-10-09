@@ -3,108 +3,121 @@
 
 #include <map>
 #include <string>
-#include "server_ftp.h"
+#include "server_directory.h"
+#include "server_honey_pot.h"
+
+#define FAKE_INFO "drwxrwxrwx 0 1000 1000 4096 Sep 24 12:34 "
 
 class Command {
  public:
-  virtual int execute(int client, std::string) = 0;
+  virtual std::string execute(std::string) = 0;
   virtual ~Command() {};
 };
 
-class FactoryCommand {
+class AllCommands {
   std::map<std::string, Command*> commands;
-  FTP &ftp;
  public:
-  FactoryCommand(FTP &ftp);
-  std::map<std::string, Command*> &getCommands();
-  ~FactoryCommand();
+  AllCommands(int &auth, Directory &dir, HoneyPot &hp);
+  AllCommands(AllCommands&& other);
+  Command* getCommands(std::string key_command);
+  void operator= (const AllCommands& other);
+  ~AllCommands();
 };
 
 class NewClientCommand : public Command {
-  FTP &ftp;
+  HoneyPot &hp;
  public:
-  explicit NewClientCommand(FTP &ftp);
-  virtual int execute(int client, std::string user);
+  explicit NewClientCommand(HoneyPot &hp);
+  virtual std::string execute(std::string received);
   ~NewClientCommand();
 };
 
 class UserCommand : public Command {
-  FTP &ftp;
+  HoneyPot &hp;
+  int &auth;
  public:
-  explicit UserCommand(FTP &ftp);
-  virtual int execute(int client, std::string user);
+  explicit UserCommand(HoneyPot &hp, int &auth);
+  virtual std::string execute(std::string received);
   ~UserCommand();
 };
 
 class PassCommand : public Command {
-  FTP &ftp;
+  HoneyPot &hp;
+  int &auth;
  public:
-  explicit PassCommand(FTP &ftp);
-  virtual int  execute(int client, std::string pass);
+  explicit PassCommand(HoneyPot &hp, int &auth);
+  virtual std::string  execute(std::string received);
   ~PassCommand();
 };
 
 class SystCommand : public Command {
-  FTP &ftp;
+  HoneyPot &hp;
+  int &auth;
  public:
-  explicit SystCommand(FTP &ftp);
-  virtual int  execute(int client, std::string null);
+  explicit SystCommand(HoneyPot &hp, int &auth);
+  virtual std::string  execute(std::string received);
   ~SystCommand();
 };
 
 class ListCommand : public Command {
-  FTP &ftp;
+  HoneyPot &hp;
+  int &auth;
+  Directory &dir;
  public:
-  explicit ListCommand(FTP &ftp);
-  virtual int  execute(int client, std::string null);
+  explicit ListCommand(HoneyPot &hp, int &auth, Directory &dir);
+  virtual std::string  execute(std::string received);
   ~ListCommand();
 };
 /*
 class HelpCommand : public Command {
-  const FTP &ftp;
+  HoneyPot &hp;
+  int &auth;
  public:
-  explicit HelpCommand(const FTP &ftp);
-  virtual int  execute(int client, std::string null);
+  explicit HelpCommand(HoneyPot &hp, int &auth);
+  virtual std::string  execute(std::string received);
   ~HelpCommand();
 };
 */
 class PWDCommand : public Command {
-  FTP &ftp;
+  HoneyPot &hp;
+  int &auth;
  public:
-  explicit PWDCommand(FTP &ftp);
-  virtual int  execute(int client, std::string null);
+  explicit PWDCommand(HoneyPot &hp, int &auth);
+  virtual std::string  execute(std::string received);
   ~PWDCommand();
 };
 
 class MKDCommand : public Command {
-  FTP &ftp;
- public:
-  explicit MKDCommand(FTP &ftp);
-  virtual int  execute(int client, std::string dir);
+  HoneyPot &hp;
+  int &auth;
+  Directory &dir; public:
+  explicit MKDCommand(HoneyPot &hp, int &auth, Directory &dir);
+  virtual std::string  execute(std::string received);
   ~MKDCommand();
 };
 
 class RMDCommand : public Command {
-  FTP &ftp;
- public:
-  explicit RMDCommand(FTP &ftp);
-  virtual int  execute(int client, std::string dir);
+  HoneyPot &hp;
+  int &auth;
+  Directory &dir; public:
+  explicit RMDCommand(HoneyPot &hp, int &auth, Directory &dir);
+  virtual std::string  execute(std::string received);
   ~RMDCommand();
 };
 
 class UNKCommand : public Command {
-  FTP &ftp;
+  HoneyPot &hp;
  public:
-  explicit UNKCommand(FTP &ftp);
-  virtual int execute(int client, std::string user);
+  explicit UNKCommand(HoneyPot &hp);
+  virtual std::string execute(std::string received);
   ~UNKCommand();
 };
 
 class QuitCommand : public Command {
-  FTP &ftp;
+  HoneyPot &hp;
  public:
-  explicit QuitCommand(FTP &ftp);
-  virtual int execute(int client, std::string user);
+  explicit QuitCommand(HoneyPot &hp);
+  virtual std::string execute(std::string received);
   ~QuitCommand();
 };
 
