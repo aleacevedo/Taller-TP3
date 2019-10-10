@@ -23,7 +23,10 @@ Socket::Socket(std::string service) : skt(),
   }
 }
 
-Socket::Socket(std::string host, std::string service) {
+Socket::Socket(std::string host, std::string service) : skt(),
+                                                        hints(),
+                                                        ptr(),
+                                                        is_server(false) {
   memset(&(this->hints), 0, sizeof hints);
   struct addrinfo *directions = this->ptr;
   this->is_server = false;
@@ -43,6 +46,12 @@ Socket::Socket(std::string host, std::string service) {
     throw SocketError("Error creating socket");
   }
 }
+
+Socket::Socket(int skt) : skt(skt),
+                          hints(),
+                          ptr(),
+                          is_server(false) {}
+
 
 void Socket::to_listen() {
   if (!this->is_server) throw SocketError("It is not server");
@@ -66,43 +75,30 @@ void Socket::to_connect() {
     throw SocketError("Error connecting: ");
 }
 
-int Socket::to_receive(std::string &buffer, int size) {
-  int received = 0;
-  char *buff = new char[size+1]();
-  if (this->is_server) throw SocketError("It is server");
-  while (received < size) {
-    int s = recv(this->skt, buff + received, size - received, 0);
-    if (s == 0)
-      return 0;
-    if (s == -1) {
-      throw SocketError("Error receiving: ");
-    }
-    received += s;
-  }
-  buffer = std::string(buff);
-  delete[] buff;
-  return received;
-}
 
-int Socket::to_receive(int skt, std::string &buffer, int size) {
-  int received = 0;
-  char *buff = new char[size+1]();
-  if (!this->is_server) throw SocketError("It is not server");
-  while (received < size) {
-    int s = recv(skt, buff + received, size - received, 0);
-    if (s == 0) {
-      delete[] buff;
-      return 0;
+int Socket::to_receive(std::string &buffer, int size) {
+  int total_received = 0;
+  int rest = size;
+  char buff[MAX_RECEPTION];
+  std::string receiving = "";
+  while (rest > 0) {
+    int to_receive = size > 99 ? MAX_RECEPTION - 1 : rest;
+    int received = 0;
+    while (received < to_receive) {
+      int s = recv(this->skt, buff + received, to_receive - received, 0);
+      if (s == 0)
+        return 0;
+      if (s == -1) {
+        throw SocketError("Error receiving: ");
+      }
+      receiving = receiving + std::string(buff);
+      received += s;
     }
-    if (s == -1) {
-      delete[] buff;
-      throw SocketError("Error receiving: ");
-    }
-    received += s;
+    rest -= received;
+    total_received += received;
   }
-  buffer = std::string(buff);
-  delete[] buff;
-  return received;
+  buffer = receiving;
+  return total_received;
 }
 
 int Socket::to_send(std::string msg, int size) {
@@ -118,37 +114,18 @@ int Socket::to_send(std::string msg, int size) {
   return sent;
 }
 
-int Socket::to_send(int skt, std::string msg, int size) {
-  int sent = 0;
-  while (sent < size) {
-    int s = send(skt, msg.substr(sent).c_str(), size - sent, 0);
-    sent += s;
-    if (s == 0)
-      return 0;
-    if (s == -1)
-      throw SocketError("Error sending: ");
-  }
-  return sent;
-}
-
 bool Socket::get_is_server() {
   return this->is_server;
 }
 
-void Socket::close_skt(int skt) {
-  shutdown(skt, SHUT_RDWR);
-  close(skt);
-}
-
-void Socket::close_me() {
+void Socket::to_close() {
   shutdown(this->skt, SHUT_RDWR);
   close(this->skt);
 }
 
 Socket::~Socket() {
   freeaddrinfo(this->ptr);
-  shutdown(this->skt, SHUT_RDWR);
-  close(this->skt);
+  this->to_close();
 }
 
 void Socket::getAddrInfo(std::string service) {
