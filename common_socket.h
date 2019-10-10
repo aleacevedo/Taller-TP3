@@ -31,6 +31,7 @@ class Socket {
  private:
   void getAddrInfo(std::string service);
   void getAddrInfo(std::string host, std::string service);
+  void create_skt();
 };
 
 #endif  //  SOCKET_H_

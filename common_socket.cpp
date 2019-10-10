@@ -14,33 +14,24 @@ Socket::Socket(std::string service) : skt(),
   this->hints.ai_socktype = SOCK_STREAM;
   this->hints.ai_flags = AI_PASSIVE;
   this->getAddrInfo(service);
-  this->skt = socket(this->ptr->ai_family,
-                this->ptr->ai_socktype,
-                this->ptr->ai_protocol);
+  this->create_skt();
   if (this->skt == -1) {
     freeaddrinfo(this->ptr);
     throw SocketError("Error creating socket");
   }
 }
 
-Socket::Socket(std::string host, std::string service) : skt(),
+Socket::Socket(std::string host, std::string service) : skt(-1),
                                                         hints(),
                                                         ptr(),
-                                                        is_server(false) {
+                                                        is_server(true) {
   memset(&(this->hints), 0, sizeof hints);
-  struct addrinfo *directions = this->ptr;
   this->is_server = false;
   this->hints.ai_family = AF_INET;
   this->hints.ai_socktype = SOCK_STREAM;
   this->hints.ai_flags = 0;
   this->getAddrInfo(host, service);
-  for (; directions != NULL; directions = directions->ai_next) {
-    this->skt = socket(this->ptr->ai_family,
-                  this->ptr->ai_socktype,
-                  this->ptr->ai_protocol);
-    if (this->skt == -1) continue;
-    return;
-  }
+  this->create_skt();
   if (this->skt == -1) {
     freeaddrinfo(this->ptr);
     throw SocketError("Error creating socket");
@@ -79,8 +70,9 @@ void Socket::to_connect() {
 int Socket::to_receive(std::string &buffer, int size) {
   int total_received = 0;
   int rest = size;
-  char buff[MAX_RECEPTION];
+  char buff[MAX_RECEPTION] = "";
   std::string receiving = "";
+  buffer = "";
   while (rest > 0) {
     int to_receive = size > 99 ? MAX_RECEPTION - 1 : rest;
     int received = 0;
@@ -126,6 +118,17 @@ void Socket::to_close() {
 Socket::~Socket() {
   freeaddrinfo(this->ptr);
   this->to_close();
+}
+
+void Socket::create_skt() {
+  struct addrinfo *directions = this->ptr;
+  for (; directions != NULL; directions = directions->ai_next) {
+    this->skt = socket(directions->ai_family,
+                  directions->ai_socktype,
+                  directions->ai_protocol);
+    if (this->skt == -1) continue;
+    return;
+  }
 }
 
 void Socket::getAddrInfo(std::string service) {
