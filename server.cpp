@@ -1,8 +1,7 @@
 #include <iostream>
 #include <string>
 #include "common_custom_errors.h"
-#include "server_ftp_factory.h"
-#include "server_ftp.h"
+#include "server_th_server.h"
 
 std::string  obtain_input() {
   std::string input;
@@ -12,14 +11,17 @@ std::string  obtain_input() {
 }
 
 int main(int argc, char* argv[]) {
-  FTPFactory ftpFact("entradas/config.cfg");
-  FTP ftp(ftpFact.generateFTP());
-  std::cout << ftp.execute("USER admin") << "\n";
-  std::cout << ftp.execute("PASS 1234") << "\n";
-  std::cout << ftp.execute("MKD dir1") << "\n";
-  std::cout << ftp.execute("MKD dir2") << "\n";
-  std::cout << ftp.execute("LIST") << "\n";
-  std::cout << ftp.execute("RMD dir1") << "\n";
-  std::cout << ftp.execute("LIST") << "\n";
-  std::cout << ftp.execute("RMD dir1") << "\n";
+  try {
+    THServer thServer("entradas/config.cfg", "8050");
+    thServer.start();
+    while (true) {
+      if (obtain_input() == "q") {
+        thServer.stop();
+        break;
+      }
+    }
+    thServer.join();
+  } catch(std::exception &e) {
+    std::cout << e.what();
+  }
 }
