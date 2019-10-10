@@ -8,8 +8,8 @@
 
 
 class FTP {
-  int auth;
-  AllCommands *myCommands;
+  int* auth;
+  AllCommands myCommands;
  public:
   explicit FTP(CommandFactory &commandFactory);
   FTP(FTP&& FTP);

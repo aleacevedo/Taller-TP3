@@ -4,8 +4,7 @@ FTPFactory::FTPFactory(std::string config_file_path) : myDir(),
                           myCommandFactory(myDir, config_file_path) {}
 
 FTP FTPFactory::generateFTP() {
-  FTP ftp(this->myCommandFactory);
-  return ftp;
+  return std::move(FTP(this->myCommandFactory));
 }
 
 FTPFactory::~FTPFactory() {}
