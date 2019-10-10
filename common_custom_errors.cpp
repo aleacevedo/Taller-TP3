@@ -53,3 +53,12 @@ SocketError::SocketError(std::string msg) noexcept {
 const char* SocketError::what() const noexcept {
   return this->msg_error.c_str();
 }
+
+CommandError::CommandError(std::string msg) noexcept {
+  int _errno = errno;
+  this->msg_error = msg + " " + strerror(_errno);
+}
+
+const char* CommandError::what() const noexcept {
+  return this->msg_error.c_str();
+}

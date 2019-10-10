@@ -66,5 +66,15 @@ class SocketError : public std::exception {
   virtual ~SocketError() noexcept {};
 };
 
+class CommandError : public std::exception {
+ private:
+  std::string msg_error;
+
+ public:
+  explicit CommandError(std::string msg) noexcept;
+  virtual const char *what() const noexcept;
+  virtual ~CommandError() noexcept {};
+};
+
 
 #endif  //  CUSTOM_ERRORS_H_
