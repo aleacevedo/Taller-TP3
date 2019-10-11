@@ -12,8 +12,10 @@ int main(int argc, char* argv[]) {
     while (true) {
       std::string input;
       std::string output;
-      if (prot.receive(output) == 0)
+      if (prot.receive(output) == 0) {
+        std::cout << output + "\n";
         break;
+      }
       std::cout << output + "\n";
       std::getline(std::cin, input);
       if (prot.send(input) == 0)
