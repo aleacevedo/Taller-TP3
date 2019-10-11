@@ -6,7 +6,7 @@ CommandFactory::CommandFactory(Directory &myDir,
                                                     myHP(config_file_path) {}
 
 AllCommands CommandFactory::generateCommands(int *auth) {
-  return std::move(AllCommands(auth, this->myDir, this->myHP));
+  return AllCommands(auth, this->myDir, this->myHP);
 }
 
 CommandFactory::~CommandFactory() {}
