@@ -12,7 +12,6 @@ int ClientProtocol::receive(std::string &buffer) {
   if (this->protocol.receive(buffer) == 0)
     return 0;
   std::string code = this->get_code(buffer);
-  std::cout << "MESSAGE CODE " << code << " \n";
   if (code == LIST_BEG_CODE)
     if (this->receive_list(buffer) == 0) return 0;
   if (code == QUIT_CODE)
@@ -30,7 +29,7 @@ int ClientProtocol::receive_list(std::string &buffer) {
       return 1;
     if (this->protocol.receive(aux) == 0)
       return 0;
-    buffer += aux;
+    buffer += "\n" + aux;
   }
 }
 
