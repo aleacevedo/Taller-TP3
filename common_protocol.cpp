@@ -10,6 +10,7 @@ int Protocol::send(std::string msg) {
 
 int Protocol::receive(std::string &received) {
   std::string caracter;
+  received.clear();
   this->skt.to_receive(caracter, 1);
   while (caracter.compare("\n") != 0) {
       received = received + caracter;
