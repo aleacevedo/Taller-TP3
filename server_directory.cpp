@@ -21,7 +21,7 @@ void Directory::remove(std::string name) {
 }
 
 std::string Directory::list() {
-  std::string list;
+  std::string list = "";
   for (std::string dir : this->directories) {
     list = list + dir + '\n';
   }
