@@ -1,7 +1,7 @@
 #include "server_th_server.h"
 
-THServer::THServer(std::string config_file_path,
-                   std::string service) : keep_alive(true),
+THServer::THServer(const std::string &config_file_path,
+                   const std::string &service) : keep_alive(true),
                                           skt(service),
                                           clients(),
                                           ftpFact(config_file_path) {

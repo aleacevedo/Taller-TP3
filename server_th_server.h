@@ -19,7 +19,8 @@ class THServer : public Thread {
   FTPFactory ftpFact;
 
  public:
-  explicit THServer(std::string config_file_path, std::string service);
+  explicit THServer(const std::string &config_file_path,
+                    const std::string &service);
   virtual void run();
   void stop();
   virtual ~THServer();

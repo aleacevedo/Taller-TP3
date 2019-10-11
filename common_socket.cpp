@@ -4,7 +4,7 @@
 #include <string.h>
 #include "common_custom_errors.h"
 
-Socket::Socket(std::string service) : skt(),
+Socket::Socket(const std::string &service) : skt(),
                                        hints(),
                                        ptr(),
                                        is_server(false) {
@@ -21,7 +21,7 @@ Socket::Socket(std::string service) : skt(),
   }
 }
 
-Socket::Socket(std::string host, std::string service) : skt(-1),
+Socket::Socket(const std::string &host, const std::string &service) : skt(-1),
                                                         hints(),
                                                         ptr(),
                                                         is_server(true) {

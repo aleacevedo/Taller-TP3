@@ -5,8 +5,11 @@
 
 
 int main(int argc, char* argv[]) {
+  if (argc < 3) return 1;
+  const std::string ip = argv[1];
+  const std::string service = argv[2];
   try {
-    Socket skt("127.0.0.1", "8050");
+    Socket skt(ip, service);
     ClientProtocol prot(skt);
     skt.to_connect();
     while (true) {
@@ -23,9 +26,6 @@ int main(int argc, char* argv[]) {
     }
     skt.to_close();
   } catch(std::exception &e) {
-    std::cout << "ERROR EN EL MAIN \n";
-    std::cout << e.what();
   } catch(...) {
-    std::cout << "Unknown Error\n";
   }
 }

@@ -17,9 +17,9 @@ class Socket {
   bool is_server;
 
  public:
-  Socket(std::string service);
-  Socket(std::string host, std::string service);
-  Socket(int skt);
+  explicit Socket(const std::string &service);
+  Socket(const std::string &host, const std::string &service);
+  explicit Socket(int skt);
   void to_listen();
   int to_accept();
   void to_connect();

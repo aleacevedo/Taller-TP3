@@ -11,8 +11,11 @@ std::string  obtain_input() {
 }
 
 int main(int argc, char* argv[]) {
+  if (argc < 3) return 1;
+  std::string service = argv[1];
+  std::string config_file = argv[2];
   try {
-    THServer thServer("entradas/config.cfg", "8050");
+    THServer thServer(config_file, service);
     thServer.start();
     while (true) {
       if (obtain_input() == "q") {
@@ -22,6 +25,6 @@ int main(int argc, char* argv[]) {
     }
     thServer.join();
   } catch(std::exception &e) {
-    std::cout << e.what();
+  } catch(...) {
   }
 }

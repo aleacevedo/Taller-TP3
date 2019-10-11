@@ -11,7 +11,7 @@
 class Command {
  public:
   virtual std::string execute(std::string) = 0;
-  virtual ~Command() {};
+  virtual ~Command() {}
 };
 
 class AllCommands {

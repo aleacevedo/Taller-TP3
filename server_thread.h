@@ -6,7 +6,7 @@
 class Thread {
  private:
   std::thread thread;
- 
+
  public:
   Thread();
   void start();

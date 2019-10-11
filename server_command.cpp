@@ -77,6 +77,7 @@ std::string PassCommand::execute(std::string received) {
         response = LOG_SUCC_CODE;
         return response + " " +this->hp.get_msg_login_success();
       }
+      *this->auth = 0;
       response = LOG_FAIL_CODE;
       return response + " " + this->hp.get_msg_login_fail();
     }
@@ -91,7 +92,10 @@ PassCommand::~PassCommand() {}
 SystCommand::SystCommand(HoneyPot &hp, int *auth) : hp(hp), auth(auth) {}
 std::string SystCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != 2) return response + " " + this->hp.get_msg_not_logged();
+  if (*this->auth != 2) {
+    *this->auth = 0;
+    return response + " " + this->hp.get_msg_not_logged();
+  }
   response = SYS_CODE;
   return response + " " + this->hp.get_system_info();
 }
@@ -102,8 +106,10 @@ ListCommand::ListCommand(HoneyPot &hp, int *auth, Directory &dir) : hp(hp),
                                                                   dir(dir) {}
 std::string ListCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != 2) return response + " " + this->hp.get_msg_not_logged();
-  response = LIST_BEG_CODE;
+  if (*this->auth != 2) {
+    *this->auth = 0;
+    return response + " " + this->hp.get_msg_not_logged();
+  }  response = LIST_BEG_CODE;
   response += " " + this->hp.get_msg_list_begin() + "\n";
   response += this->dir.list();
   response += LIST_END_CODE;
@@ -124,8 +130,10 @@ HelpCommand::~HelpCommand() {}
 PWDCommand::PWDCommand(HoneyPot &hp, int *auth) : hp(hp), auth(auth) {}
 std::string PWDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != 2) return response + " " + this->hp.get_msg_not_logged();
-  response = PWD_CODE;
+  if (*this->auth != 2) {
+    *this->auth = 0;
+    return response + " " + this->hp.get_msg_not_logged();
+  }  response = PWD_CODE;
   return response + " " + this->hp.get_current_dir();
 }
 PWDCommand::~PWDCommand() {}
@@ -137,7 +145,10 @@ std::string MKDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
   try {
     std::string response = NOT_LOG_CODE;
-    if (*this->auth != 2) return response + " " + this->hp.get_msg_not_logged();
+    if (*this->auth != 2) {
+      *this->auth = 0;
+      return response + " " + this->hp.get_msg_not_logged();
+    }
     std::string toAdd = get_param(received);
     try {
       this->dir.add(FAKE_INFO + toAdd);
@@ -160,7 +171,10 @@ RMDCommand::RMDCommand(HoneyPot &hp, int *auth, Directory &dir) : hp(hp),
 std::string RMDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
   try {
-    if (*this->auth != 2) return response + " " + this->hp.get_msg_not_logged();
+    if (*this->auth != 2) {
+      *this->auth = 0;
+      return response + " " + this->hp.get_msg_not_logged();
+    }
     std::string toRmv = received.substr(received.find(" ") + 1);
     try {
       this->dir.remove(FAKE_INFO + toRmv);
