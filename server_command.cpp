@@ -109,7 +109,6 @@ std::string ListCommand::execute(std::string received) {
   response += LIST_END_CODE;
   response += " " + this->hp.get_msg_list_end();
   return response;
-
 }
 ListCommand::~ListCommand() {}
 /*
