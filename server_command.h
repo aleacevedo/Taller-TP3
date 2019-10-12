@@ -14,22 +14,12 @@ class Command {
   virtual ~Command() {}
 };
 
-class AllCommands {
-  std::map<std::string, Command*> commands;
- public:
-  AllCommands(int *auth, Directory &dir, HoneyPot &hp);
-  AllCommands(AllCommands&& other);
-  Command* getCommands(std::string key_command);
-  void operator= (const AllCommands& other);
-  ~AllCommands();
-};
-
-class NewClientCommand : public Command {
+class WelcomeCommand : public Command {
   HoneyPot &hp;
  public:
-  explicit NewClientCommand(HoneyPot &hp);
+  explicit WelcomeCommand(HoneyPot &hp);
   virtual std::string execute(std::string received);
-  ~NewClientCommand();
+  ~WelcomeCommand();
 };
 
 class UserCommand : public Command {
@@ -68,16 +58,19 @@ class ListCommand : public Command {
   virtual std::string  execute(std::string received);
   ~ListCommand();
 };
-/*
+
 class HelpCommand : public Command {
   HoneyPot &hp;
   int *auth;
+  std::map<std::string, Command*> &commands;
  public:
-  explicit HelpCommand(HoneyPot &hp, int *auth);
+  explicit HelpCommand(HoneyPot &hp, int *auth,
+                      std::map<std::string, Command*> &commands);
   virtual std::string  execute(std::string received);
+  std::string get_commands();
   ~HelpCommand();
 };
-*/
+
 class PWDCommand : public Command {
   HoneyPot &hp;
   int *auth;
@@ -120,5 +113,19 @@ class QuitCommand : public Command {
   virtual std::string execute(std::string received);
   ~QuitCommand();
 };
+
+
+class AllCommands {
+  std::map<std::string, Command*> commands;
+  WelcomeCommand welcome_command;
+  UNKCommand unk_command;
+ public:
+  AllCommands(int *auth, Directory &dir, HoneyPot &hp);
+  AllCommands(AllCommands&& other);
+  Command* get_commands(std::string key_command);
+  Command* get_welcome();
+  ~AllCommands();
+};
+
 
 #endif  //  COMMAND_H_

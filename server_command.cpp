@@ -3,8 +3,16 @@
 #include "common_custom_errors.h"
 #include "common_ftp_declarations.h"
 
-AllCommands::AllCommands(int *auth, Directory &dir, HoneyPot &hp) : commands() {
-  this->commands[NEW_CLIENT_CMD] = new NewClientCommand(hp);
+#define NOT_LOGGED 0
+#define WRONG_USER 1
+#define GOOD_USER 2
+#define LOGGED 3
+
+AllCommands::AllCommands(int *auth,
+                         Directory &dir,
+                         HoneyPot &hp) : commands(),
+                                         welcome_command(hp),
+                                         unk_command(hp) {
   this->commands[USER_CMD] = new UserCommand(hp, auth);
   this->commands[PASS_CMD] = new PassCommand(hp, auth);
   this->commands[SYST_CMD] = new SystCommand(hp, auth);
@@ -12,21 +20,28 @@ AllCommands::AllCommands(int *auth, Directory &dir, HoneyPot &hp) : commands() {
   this->commands[PWD_CMD] = new PWDCommand(hp, auth);
   this->commands[MKD_CMD] = new MKDCommand(hp, auth, dir);
   this->commands[RMD_CMD] = new RMDCommand(hp, auth, dir);
+  this->commands[HELP_CMD] = new HelpCommand(hp, auth, this->commands);
   this->commands[UNK_CMD] = new UNKCommand(hp);
   this->commands[QUIT_CMD] = new QuitCommand(hp);
 }
 
-AllCommands::AllCommands(AllCommands&& other) : commands(other.commands) {
+AllCommands::AllCommands(AllCommands&& other) : commands(other.commands),
+                                    welcome_command(other.welcome_command),
+                                    unk_command(other.unk_command) {
   other.commands.clear();
 }
 
-Command* AllCommands::getCommands(std::string received) {
+Command* AllCommands::get_commands(std::string received) {
   std::string key_command = received.substr(0, received.find(" "));
   try {
     return this->commands.at(key_command);
   } catch(std::exception &e) {
-    return this->commands.at(UNK_CMD);
+    return &(this->unk_command);
   }
+}
+
+Command* AllCommands::get_welcome() {
+  return &(this->welcome_command);
 }
 
 std::string get_param(std::string received) {
@@ -41,12 +56,12 @@ AllCommands::~AllCommands() {
     delete it->second;
 }
 
-NewClientCommand::NewClientCommand(HoneyPot &hp) : hp(hp) {}
-std::string NewClientCommand::execute(std::string receive) {
+WelcomeCommand::WelcomeCommand(HoneyPot &hp) : hp(hp) {}
+std::string WelcomeCommand::execute(std::string receive) {
   std::string response = NEW_CLI_CODE;
   return response + " " + this->hp.get_msg_new_client();
 }
-NewClientCommand::~NewClientCommand() {}
+WelcomeCommand::~WelcomeCommand() {}
 
 UserCommand::UserCommand(HoneyPot &hp, int *auth) : hp(hp), auth(auth) {}
 std::string UserCommand::execute(std::string received) {
@@ -55,11 +70,11 @@ std::string UserCommand::execute(std::string received) {
     std::string response ="";
     if (user == this->hp.get_user()) {
       response = USER_CODE;
-      *this->auth = 1;
+      *this->auth = GOOD_USER;
       return response + " " + this->hp.get_msg_pass_required();
     }
-    *this->auth = 0;
-    response = NOT_LOG_CODE;
+    *this->auth = WRONG_USER;
+    response = USER_CODE;
     return response + " " + this->hp.get_msg_pass_required();
   } catch (CommandError &e) {
     return e.what();
@@ -70,14 +85,19 @@ PassCommand::PassCommand(HoneyPot &hp, int *auth) : hp(hp), auth(auth) {}
 std::string PassCommand::execute(std::string received) {
   try {
     std::string response ="";
-    if (*this->auth == 1) {
+    if (*this->auth == GOOD_USER) {
       std::string pass = get_param(received);
       if (pass == this->hp.get_password()) {
-        *this->auth = 2;
+        *this->auth = LOGGED;
         response = LOG_SUCC_CODE;
         return response + " " +this->hp.get_msg_login_success();
       }
-      *this->auth = 0;
+      *this->auth = NOT_LOGGED;
+      response = LOG_FAIL_CODE;
+      return response + " " + this->hp.get_msg_login_fail();
+    }
+    if (*this->auth == WRONG_USER) {
+      *this->auth = NOT_LOGGED;
       response = LOG_FAIL_CODE;
       return response + " " + this->hp.get_msg_login_fail();
     }
@@ -92,8 +112,8 @@ PassCommand::~PassCommand() {}
 SystCommand::SystCommand(HoneyPot &hp, int *auth) : hp(hp), auth(auth) {}
 std::string SystCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != 2) {
-    *this->auth = 0;
+  if (*this->auth != LOGGED) {
+    *this->auth = NOT_LOGGED;
     return response + " " + this->hp.get_msg_not_logged();
   }
   response = SYS_CODE;
@@ -106,8 +126,8 @@ ListCommand::ListCommand(HoneyPot &hp, int *auth, Directory &dir) : hp(hp),
                                                                   dir(dir) {}
 std::string ListCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != 2) {
-    *this->auth = 0;
+  if (*this->auth != LOGGED) {
+    *this->auth = NOT_LOGGED;
     return response + " " + this->hp.get_msg_not_logged();
   }  response = LIST_BEG_CODE;
   response += " " + this->hp.get_msg_list_begin() + "\n";
@@ -117,16 +137,6 @@ std::string ListCommand::execute(std::string received) {
   return response;
 }
 ListCommand::~ListCommand() {}
-/*
-HelpCommand::UserCommand(FTP &ftp) : ftp(ftp) {}
-int HelpCommand::execute(int client) {
-  return this->ftp.user(client, "");
-}
-int HelpCommand::execute(int client, std::string user) {
-  return this->ftp.user(client, user);
-}
-HelpCommand::~HelpCommand() {}
-*/
 PWDCommand::PWDCommand(HoneyPot &hp, int *auth) : hp(hp), auth(auth) {}
 std::string PWDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
@@ -137,6 +147,28 @@ std::string PWDCommand::execute(std::string received) {
   return response + " " + this->hp.get_current_dir();
 }
 PWDCommand::~PWDCommand() {}
+HelpCommand::HelpCommand(HoneyPot &hp, int *auth,
+                        std::map<std::string, Command*> &commands) : hp(hp),
+                                                                  auth(auth),
+                                                        commands(commands) {}
+std::string HelpCommand::execute(std::string received) {
+  std::string response = NOT_LOG_CODE;
+  if (*this->auth != LOGGED) {
+    *this->auth = NOT_LOGGED;
+    return response + " " + this->hp.get_msg_not_logged();
+  }
+  response = HELP_CODE;
+  return response + " " + this->get_commands();
+}
+std::string HelpCommand::get_commands() {
+  std::string aux = "";
+  std::map<std::string, Command*>::iterator it = this->commands.begin();
+  for (; it != this->commands.end(); ++it)
+    aux += it->first + " ";
+  aux.pop_back();
+  return aux;
+}
+HelpCommand::~HelpCommand() {}
 
 MKDCommand::MKDCommand(HoneyPot &hp, int *auth, Directory &dir) : hp(hp),
                                                                   auth(auth),
@@ -145,15 +177,15 @@ std::string MKDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
   try {
     std::string response = NOT_LOG_CODE;
-    if (*this->auth != 2) {
-      *this->auth = 0;
+    if (*this->auth != LOGGED) {
+      *this->auth = NOT_LOGGED;
       return response + " " + this->hp.get_msg_not_logged();
     }
     std::string toAdd = get_param(received);
     try {
       this->dir.add(FAKE_INFO + toAdd);
-      response = MKD_SUCC_CODE;
-      response += " " + toAdd;
+      response =  MKD_SUCC_CODE;
+      response += " \"" + toAdd + "\"";
       return response + " " +this->hp.get_msg_mkd_success();
     } catch(DirExistError &e) {
       response = MKD_FAIL_CODE;
@@ -171,14 +203,15 @@ RMDCommand::RMDCommand(HoneyPot &hp, int *auth, Directory &dir) : hp(hp),
 std::string RMDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
   try {
-    if (*this->auth != 2) {
-      *this->auth = 0;
+    if (*this->auth != LOGGED) {
+      *this->auth = NOT_LOGGED;
       return response + " " + this->hp.get_msg_not_logged();
     }
     std::string toRmv = received.substr(received.find(" ") + 1);
     try {
       this->dir.remove(FAKE_INFO + toRmv);
       response = RMD_SUCC_CODE;
+      response += " \"" + toRmv + "\"";
       return response + " " + this->hp.get_msg_rmd_success();
     } catch(DirNotExistError &e) {
       response = RMD_FAIL_CODE;
@@ -192,7 +225,8 @@ RMDCommand::~RMDCommand() {}
 
 UNKCommand::UNKCommand(HoneyPot &hp) : hp(hp) {}
 std::string UNKCommand::execute(std::string received) {
-  return this->hp.get_msg_unknown_cmd();
+  std::string response = UNK_CODE;
+  return response + " " + this->hp.get_msg_unknown_cmd();
 }
 UNKCommand::~UNKCommand() {}
 
