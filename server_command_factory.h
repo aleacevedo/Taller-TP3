@@ -12,7 +12,7 @@ class CommandFactory {
 
  public:
   CommandFactory(Directory &myDir, std::string config_file_path);
-  AllCommands generateCommands(int *auth);
+  AllCommands generate_commands(int *auth);
   ~CommandFactory();
 };
 
