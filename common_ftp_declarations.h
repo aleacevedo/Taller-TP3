@@ -6,6 +6,7 @@
 #define PWD_CMD "PWD"
 #define MKD_CMD "MKD"
 #define RMD_CMD "RMD"
+#define HELP_CMD "HELP"
 #define UNK_CMD "UNKNOW"
 #define QUIT_CMD "QUIT"
 
@@ -23,4 +24,5 @@
 #define MKD_FAIL_CODE "550"
 #define RMD_SUCC_CODE "250"
 #define RMD_FAIL_CODE "550"
+#define UNK_CODE "530"
 #define QUIT_CODE "221"
