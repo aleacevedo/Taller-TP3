@@ -10,7 +10,7 @@ THClient::THClient(int skt,
 
 void THClient::run() {
   try {
-    std::string welcome = this->myFtp.execute("NEWCLIENT");
+    std::string welcome = this->myFtp.welcome();
     this->protocol.send(welcome);
     while (this->keep_talking) {
       std::string cmd;
@@ -25,9 +25,7 @@ void THClient::run() {
       }
     }
   } catch (std::exception &e) {
-    std::cout << e.what();
   } catch (...) {
-    std::cout << "UNKNOW ERROR\n";
   }
   this->keep_talking = false;
 }

@@ -9,10 +9,11 @@
 
 class FTP {
   int* auth;
-  AllCommands myCommands;
+  AllCommands my_commands;
  public:
   explicit FTP(CommandFactory &commandFactory);
   FTP(FTP&& FTP);
+  std::string welcome();
   std::string execute(std::string received);
   ~FTP();
 };

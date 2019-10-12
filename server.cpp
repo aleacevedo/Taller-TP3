@@ -3,6 +3,9 @@
 #include "common_custom_errors.h"
 #include "server_th_server.h"
 
+#define SERVICE_POS 1
+#define CONFIG_POS 2
+
 std::string  obtain_input() {
   std::string input;
   std::cout << "Ingrese el caracter q para salir\n";
@@ -12,8 +15,8 @@ std::string  obtain_input() {
 
 int main(int argc, char* argv[]) {
   if (argc < 3) return 1;
-  std::string service = argv[1];
-  std::string config_file = argv[2];
+  std::string service = argv[SERVICE_POS];
+  std::string config_file = argv[CONFIG_POS];
   try {
     THServer thServer(config_file, service);
     thServer.start();
