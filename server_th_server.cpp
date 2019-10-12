@@ -17,10 +17,7 @@ void THServer::run() {
       this->clients.back()->start();
     }
   } catch (std::exception &e) {
-    std::cout << "ERROR EN EL THSERVER \n";
-    std::cout << e.what();
   } catch (...) {
-    std::cout << "UNKNOW ERROR \n";
   }
 }
 
