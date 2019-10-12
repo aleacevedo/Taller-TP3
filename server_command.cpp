@@ -21,7 +21,6 @@ AllCommands::AllCommands(int *auth,
   this->commands[MKD_CMD] = new MKDCommand(hp, auth, dir);
   this->commands[RMD_CMD] = new RMDCommand(hp, auth, dir);
   this->commands[HELP_CMD] = new HelpCommand(hp, auth, this->commands);
-  this->commands[UNK_CMD] = new UNKCommand(hp);
   this->commands[QUIT_CMD] = new QuitCommand(hp);
 }
 
@@ -54,6 +53,14 @@ AllCommands::~AllCommands() {
   std::map<std::string, Command*>::iterator it = this->commands.begin();
   for (; it != this->commands.end(); ++it)
     delete it->second;
+}
+
+bool is_logged(int *auth) {
+  if (*auth != LOGGED) {
+    *auth = NOT_LOGGED;
+    return false;
+  }
+  return true;
 }
 
 WelcomeCommand::WelcomeCommand(HoneyPot &hp) : hp(hp) {}
@@ -112,8 +119,7 @@ PassCommand::~PassCommand() {}
 SystCommand::SystCommand(HoneyPot &hp, int *auth) : hp(hp), auth(auth) {}
 std::string SystCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != LOGGED) {
-    *this->auth = NOT_LOGGED;
+  if (!is_logged(this->auth)) {
     return response + " " + this->hp.get_msg_not_logged();
   }
   response = SYS_CODE;
@@ -126,10 +132,10 @@ ListCommand::ListCommand(HoneyPot &hp, int *auth, Directory &dir) : hp(hp),
                                                                   dir(dir) {}
 std::string ListCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != LOGGED) {
-    *this->auth = NOT_LOGGED;
+  if (!is_logged(this->auth)) {
     return response + " " + this->hp.get_msg_not_logged();
-  }  response = LIST_BEG_CODE;
+  }
+  response = LIST_BEG_CODE;
   response += " " + this->hp.get_msg_list_begin() + "\n";
   response += this->dir.list();
   response += LIST_END_CODE;
@@ -140,8 +146,7 @@ ListCommand::~ListCommand() {}
 PWDCommand::PWDCommand(HoneyPot &hp, int *auth) : hp(hp), auth(auth) {}
 std::string PWDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != 2) {
-    *this->auth = 0;
+  if (!is_logged(this->auth)) {
     return response + " " + this->hp.get_msg_not_logged();
   }  response = PWD_CODE;
   return response + " " + this->hp.get_current_dir();
@@ -153,8 +158,7 @@ HelpCommand::HelpCommand(HoneyPot &hp, int *auth,
                                                         commands(commands) {}
 std::string HelpCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
-  if (*this->auth != LOGGED) {
-    *this->auth = NOT_LOGGED;
+  if (!is_logged(this->auth)) {
     return response + " " + this->hp.get_msg_not_logged();
   }
   response = HELP_CODE;
@@ -177,8 +181,7 @@ std::string MKDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
   try {
     std::string response = NOT_LOG_CODE;
-    if (*this->auth != LOGGED) {
-      *this->auth = NOT_LOGGED;
+    if (!is_logged(this->auth)) {
       return response + " " + this->hp.get_msg_not_logged();
     }
     std::string toAdd = get_param(received);
@@ -203,8 +206,7 @@ RMDCommand::RMDCommand(HoneyPot &hp, int *auth, Directory &dir) : hp(hp),
 std::string RMDCommand::execute(std::string received) {
   std::string response = NOT_LOG_CODE;
   try {
-    if (*this->auth != LOGGED) {
-      *this->auth = NOT_LOGGED;
+    if (!is_logged(this->auth)) {
       return response + " " + this->hp.get_msg_not_logged();
     }
     std::string toRmv = received.substr(received.find(" ") + 1);
@@ -226,7 +228,8 @@ RMDCommand::~RMDCommand() {}
 UNKCommand::UNKCommand(HoneyPot &hp) : hp(hp) {}
 std::string UNKCommand::execute(std::string received) {
   std::string response = UNK_CODE;
-  return response + " " + this->hp.get_msg_unknown_cmd();
+  response += " " + this->hp.get_msg_unknown_cmd();
+  return response;
 }
 UNKCommand::~UNKCommand() {}
 
